@@ -65,7 +65,7 @@ SEAFILE_TARBALL_URL="${SEAFILE_TARBALL_URL:-https://plus.seafile.com/d/6e5297246
 SEAFILE_SERVER_NAME="${SEAFILE_SERVER_NAME:-seafile}"
 SEAFILE_SERVER_HOSTNAME="${SEAFILE_SERVER_HOSTNAME:-$LOCAL_IP}"
 SEAFILE_FILESERVER_PORT="${SEAFILE_FILESERVER_PORT:-8082}"
-SEAFILE_ADMIN_EMAIL="${SEAFILE_ADMIN_EMAIL:-admin@change.me}"
+SEAFILE_ADMIN_EMAIL="${SEAFILE_ADMIN_EMAIL:-kevin@lemaire.link}"
 SEAFILE_ADMIN_PASSWORD="${SEAFILE_ADMIN_PASSWORD:-$(pwgen -s 20 1)}"
 SEAFILE_DB_PASS="${SEAFILE_DB_PASS:-$(pwgen -s 24 1)}"
 JWT_PRIVATE_KEY="${JWT_PRIVATE_KEY:-$(pwgen -s 40 1)}"
@@ -78,11 +78,7 @@ fi
 msg_info "Using Seafile installation parameters"
 msg_ok "Tarball URL provided"
 msg_ok "Server hostname: ${SEAFILE_SERVER_HOSTNAME}"
-if [[ "${SEAFILE_ADMIN_EMAIL}" == "admin@change.me" ]]; then
-  msg_warn "No admin email provided; using temporary placeholder ${SEAFILE_ADMIN_EMAIL}"
-else
-  msg_ok "Admin email: ${SEAFILE_ADMIN_EMAIL}"
-fi
+msg_ok "Admin email: ${SEAFILE_ADMIN_EMAIL}"
 
 msg_info "Persisting installer state"
 cat <<STATE_EOF > ${SEAFILE_STATE_DIR}/seafile-installer.conf
