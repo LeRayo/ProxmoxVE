@@ -239,8 +239,20 @@ sed -i 's#^bind = ".*"#bind = "0.0.0.0:8000"#' ${SEAFILE_CONF_DIR}/gunicorn.conf
 
 msg_info "Starting Seafile services"
 systemctl enable -q --now seafile.service
+for _ in $(seq 1 20); do
+  if systemctl is-active --quiet seafile.service; then
+    break
+  fi
+  sleep 2
+done
+if ! systemctl is-active --quiet seafile.service; then
+  msg_error "seafile.service did not become active before starting Seahub"
+  systemctl --no-pager --full status seafile.service || true
+  exit 1
+fi
 systemctl enable -q seahub.service
 if ! systemctl start seahub.service; then
+  sleep 3
   runuser -u ${SEAFILE_USER} -- bash -lc "cd ${SEAFILE_ROOT}/seafile-server-latest && yes | bash ./seahub.sh start"
 fi
 sleep 5
