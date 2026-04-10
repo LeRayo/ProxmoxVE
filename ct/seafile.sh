@@ -16,7 +16,21 @@ var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
 var_unprivileged="${var_unprivileged:-1}"
 
-source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/build.func)
+build_func_tmp=$(mktemp)
+curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/build.func -o "${build_func_tmp}"
+python3 - <<'PY_BUILD' "${build_func_tmp}"
+from pathlib import Path
+import sys
+path = Path(sys.argv[1])
+text = path.read_text()
+old = 'https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/install/${var_install}.sh'
+new = 'https://raw.githubusercontent.com/LeRayo/ProxmoxVE/main/install/${var_install}.sh'
+if old not in text:
+    raise SystemExit('Expected install raw URL not found in build.func')
+path.write_text(text.replace(old, new))
+PY_BUILD
+source "${build_func_tmp}"
+rm -f "${build_func_tmp}"
 
 header_info "$APP"
 variables
