@@ -27,7 +27,9 @@ old = 'https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/instal
 new = 'https://raw.githubusercontent.com/LeRayo/ProxmoxVE/main/install/${var_install}.sh'
 if old not in text:
     raise SystemExit('Expected install raw URL not found in build.func')
-path.write_text(text.replace(old, new))
+text = text.replace(old, new)
+text = text.replace('lxc-attach -n "$CTID" -- bash -c "$(curl -fsSL https://raw.githubusercontent.com/LeRayo/ProxmoxVE/main/install/${var_install}.sh)"', 'echo "DEBUG install url: https://raw.githubusercontent.com/LeRayo/ProxmoxVE/main/install/${var_install}.sh"; lxc-attach -n "$CTID" -- bash -c "$(curl -fsSL https://raw.githubusercontent.com/LeRayo/ProxmoxVE/main/install/${var_install}.sh)"')
+path.write_text(text)
 PY_BUILD
 source "${build_func_tmp}"
 rm -f "${build_func_tmp}"
