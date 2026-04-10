@@ -229,12 +229,13 @@ Description=Seafile
 After=network.target mariadb.service redis-server.service
 
 [Service]
-Type=forking
+Type=oneshot
+User=${SEAFILE_USER}
+Group=${SEAFILE_USER}
+RemainAfterExit=yes
 ExecStart=bash ${SEAFILE_ROOT}/run_with_venv.sh seafile.sh start
 ExecStop=bash ${SEAFILE_ROOT}/seafile-server-latest/seafile.sh stop
 LimitNOFILE=infinity
-User=${SEAFILE_USER}
-Group=${SEAFILE_USER}
 
 [Install]
 WantedBy=multi-user.target
