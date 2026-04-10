@@ -164,6 +164,29 @@ if [[ ! -f "${SEAFILE_ROOT}/seafile-server-latest/seafile.sh" ]]; then
 fi
 msg_ok "Ran Seafile setup"
 
+msg_info "Patching Seafile startup checks"
+python3 - <<'PY_PATCH'
+from pathlib import Path
+p = Path("/opt/seafile/seafile-server-latest/seafile.sh")
+text = p.read_text()
+old = """    if pid=$(pgrep -f "seafile-monitor.sh" 2>/dev/null); then
+        echo "Seafile monitor is already running, pid $pid"
+        echo
+        exit 1;
+    fi
+"""
+new = """    if pid=$(pgrep -f "^${INSTALLPATH}/seafile-monitor.sh$" 2>/dev/null); then
+        echo "Seafile monitor is already running, pid $pid"
+        echo
+        exit 1;
+    fi
+"""
+if old not in text:
+    raise SystemExit("Expected monitor check block not found in seafile.sh")
+p.write_text(text.replace(old, new, 1))
+PY_PATCH
+msg_ok "Patched Seafile startup checks"
+
 msg_info "Creating Seafile environment file"
 mkdir -p ${SEAFILE_CONF_DIR}
 cat <<ENV_EOF > ${SEAFILE_CONF_DIR}/.env
