@@ -278,7 +278,9 @@ fi
 systemctl enable -q seahub.service
 if ! systemctl start seahub.service; then
   sleep 3
-  runuser -u ${SEAFILE_USER} -- bash -lc "cd ${SEAFILE_ROOT}/seafile-server-latest && yes | bash ./seahub.sh start"
+  msg_warn "seahub.service failed on first start; attempting explicit admin bootstrap"
+  runuser -u ${SEAFILE_USER} -- bash -lc "cd ${SEAFILE_ROOT}/seafile-server-latest/seahub && source ${SEAFILE_ROOT}/python-venv/bin/activate && export CCNET_CONF_DIR=${SEAFILE_CONF_DIR} && export SEAFILE_CONF_DIR=${SEAFILE_CONF_DIR} && export SEAFILE_CENTRAL_CONF_DIR=${SEAFILE_CONF_DIR} && export PYTHONPATH=${SEAFILE_ROOT}/seafile-server-latest/seahub/thirdpart:${SEAFILE_CONF_DIR}:${SEAFILE_ROOT}/seafile-server-latest/seafile/lib/python3/site-packages:${SEAFILE_ROOT}/seafile-server-latest/seafile/lib64/python3/site-packages && DJANGO_SUPERUSER_EMAIL='${SEAFILE_ADMIN_EMAIL}' DJANGO_SUPERUSER_PASSWORD='${SEAFILE_ADMIN_PASSWORD}' python manage.py createsuperuser --noinput || true"
+  runuser -u ${SEAFILE_USER} -- bash -lc "cd ${SEAFILE_ROOT}/seafile-server-latest && bash ./seahub.sh start 8000"
 fi
 sleep 5
 if ! systemctl is-active --quiet seafile.service; then
