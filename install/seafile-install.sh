@@ -5,6 +5,9 @@
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
 # Source: https://manual.seafile.com/latest/setup_binary/installation/
 
+exec > >(tee -a /root/seafile-install-debug.log) 2>&1
+set -x
+
 source /dev/stdin <<<"$FUNCTIONS_FILE_PATH"
 color
 verb_ip6
