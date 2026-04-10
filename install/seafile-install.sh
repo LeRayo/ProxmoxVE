@@ -16,6 +16,7 @@ setting_up_container
 network_check
 update_os
 
+msg_info "Seafile installer signature: fork-build-2026-04-10"
 msg_info "Refreshing APT metadata"
 $STD apt update
 msg_ok "Refreshed APT metadata"
