@@ -208,8 +208,13 @@ msg_ok "Created Seafile environment file"
 msg_info "Creating run_with_venv helper"
 cat <<'EOF_VENV' > ${SEAFILE_ROOT}/run_with_venv.sh
 #!/bin/bash
+set -euo pipefail
 dir_name="$(cd "$(dirname "$0")" && pwd)"
 source "${dir_name}/python-venv/bin/activate"
+export SEAFILE_CENTRAL_CONF_DIR="${dir_name}/conf"
+export CCNET_CONF_DIR="${dir_name}/conf"
+export SEAFILE_CONF_DIR="${dir_name}/conf"
+export PYTHONPATH="${dir_name}/seafile-server-latest/seafile/lib/python3/site-packages:${dir_name}/seafile-server-latest/seafile/lib64/python3/site-packages:${dir_name}/seafile-server-latest/seahub:${dir_name}/seafile-server-latest/seahub/thirdpart:${PYTHONPATH:-}"
 script="$1"
 shift 1
 exec "${dir_name}/seafile-server-latest/${script}" "$@"
