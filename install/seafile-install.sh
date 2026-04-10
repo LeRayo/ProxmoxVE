@@ -277,12 +277,11 @@ fi
 systemctl enable -q seahub.service
 if ! systemctl start seahub.service; then
   sleep 3
-  msg_warn "seahub.service failed on first start; attempting explicit admin bootstrap"
-  runuser -u ${SEAFILE_USER} -- bash -lc "cd ${SEAFILE_ROOT}/seafile-server-latest && if [ -x ./reset-admin.sh ]; then printf '%s
+  msg_warn "seahub.service failed on first start; feeding explicit admin answers to seahub.sh"
+  runuser -u ${SEAFILE_USER} -- bash -lc "cd ${SEAFILE_ROOT}/seafile-server-latest && printf '%s
 %s
 %s
-' '${SEAFILE_ADMIN_EMAIL}' '${SEAFILE_ADMIN_PASSWORD}' '${SEAFILE_ADMIN_PASSWORD}' | bash ./reset-admin.sh; fi"
-  runuser -u ${SEAFILE_USER} -- bash -lc "cd ${SEAFILE_ROOT}/seafile-server-latest && bash ./seahub.sh start 8000"
+' '${SEAFILE_ADMIN_EMAIL}' '${SEAFILE_ADMIN_PASSWORD}' '${SEAFILE_ADMIN_PASSWORD}' | bash ./seahub.sh start 8000"
 fi
 sleep 5
 if ! systemctl is-active --quiet seafile.service; then
