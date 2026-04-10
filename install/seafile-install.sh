@@ -206,12 +206,14 @@ Description=Seafile
 After=network.target mariadb.service redis-server.service
 
 [Service]
-Type=forking
-ExecStart=bash ${SEAFILE_ROOT}/run_with_venv.sh seafile.sh start
-ExecStop=bash ${SEAFILE_ROOT}/seafile-server-latest/seafile.sh stop
-LimitNOFILE=infinity
+Type=oneshot
 User=${SEAFILE_USER}
 Group=${SEAFILE_USER}
+RemainAfterExit=yes
+ExecStart=bash ${SEAFILE_ROOT}/run_with_venv.sh seafile.sh start
+ExecStop=bash ${SEAFILE_ROOT}/seafile-server-latest/seafile.sh stop
+ExecStopPost=/bin/bash -lc 'pkill -u ${SEAFILE_USER} -f "seafile-monitor.sh|seaf-server|fileserver|seafevents.main|wsgidav.server.server_cli" || true; rm -f ${SEAFILE_ROOT}/pids/*'
+LimitNOFILE=infinity
 
 [Install]
 WantedBy=multi-user.target
